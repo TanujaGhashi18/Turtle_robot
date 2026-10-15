@@ -1,0 +1,98 @@
+# =============================================================================
+# ros_gz_bridge configuration for the bio-inspired turtle robot.
+#
+# Used by:  ros2 run ros_gz_bridge parameter_bridge \
+#               --ros-args -p config_file:=<this file>
+#
+# Direction values accepted by ros_gz_bridge:
+#   GZ_TO_ROS    Gazebo publishes, ROS subscribes
+#   ROS_TO_GZ    ROS publishes, Gazebo subscribes
+#   BIDIRECTIONAL
+#
+# The Gazebo-side thruster command topics are created by the native
+# gz::sim::systems::Thruster plugin (see urdf/final_robot.urdf):
+#   <namespace>/<topic>  =>  /underwater_robot/thruster/<name>/cmd_thrust
+# The ROS-side topic names are kept identical to avoid confusion.
+# =============================================================================
+
+# ----------------------------- Simulation clock -----------------------------
+- ros_topic_name: "/clock"
+  gz_topic_name: "/clock"
+  ros_type_name: "rosgraph_msgs/msg/Clock"
+  gz_type_name: "gz.msgs.Clock"
+  direction: GZ_TO_ROS
+
+# -------------------------------- Sensors -----------------------------------
+# Camera image + intrinsics (raw Gazebo topics are /camera and /camera_info)
+- ros_topic_name: "/camera/image_raw"
+  gz_topic_name: "/camera"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/camera/camera_info"
+  gz_topic_name: "/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/imu"
+  gz_topic_name: "/imu"
+  ros_type_name: "sensor_msgs/msg/Imu"
+  gz_type_name: "gz.msgs.IMU"
+  direction: GZ_TO_ROS
+
+# Raw NavSat fix from the world's gz-sim-navsat-system.
+# NOTE: physically meaningless while submerged; the gps_adapter node
+# re-publishes it on /gps/fix with an INVALID status below the surface.
+- ros_topic_name: "/navsat"
+  gz_topic_name: "/navsat"
+  ros_type_name: "sensor_msgs/msg/NavSatFix"
+  gz_type_name: "gz.msgs.NavSat"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/joint_states"
+  gz_topic_name: "/joint_states"
+  ros_type_name: "sensor_msgs/msg/JointState"
+  gz_type_name: "gz.msgs.Model"
+  direction: GZ_TO_ROS
+
+# ------------------------- Local odometry + TF ------------------------------
+- ros_topic_name: "/odometry"
+  gz_topic_name: "/odometry"
+  ros_type_name: "nav_msgs/msg/Odometry"
+  gz_type_name: "gz.msgs.Odometry"
+  direction: GZ_TO_ROS
+
+# Pose_V -> TFMessage (published by gz-sim-odometry-publisher-system tf_topic)
+- ros_topic_name: "/tf"
+  gz_topic_name: "/tf"
+  ros_type_name: "tf2_msgs/msg/TFMessage"
+  gz_type_name: "gz.msgs.Pose_V"
+  direction: GZ_TO_ROS
+
+# ------------------------ Thruster commands (ROS -> GZ) ---------------------
+# std_msgs/Float64 "data" is the commanded thrust in Newtons (ForceCmd mode).
+- ros_topic_name: "/underwater_robot/thruster/front_vertical/cmd_thrust"
+  gz_topic_name: "/underwater_robot/thruster/front_vertical/cmd_thrust"
+  ros_type_name: "std_msgs/msg/Float64"
+  gz_type_name: "gz.msgs.Double"
+  direction: ROS_TO_GZ
+
+- ros_topic_name: "/underwater_robot/thruster/rear_vertical/cmd_thrust"
+  gz_topic_name: "/underwater_robot/thruster/rear_vertical/cmd_thrust"
+  ros_type_name: "std_msgs/msg/Float64"
+  gz_type_name: "gz.msgs.Double"
+  direction: ROS_TO_GZ
+
+- ros_topic_name: "/underwater_robot/thruster/left_horizontal/cmd_thrust"
+  gz_topic_name: "/underwater_robot/thruster/left_horizontal/cmd_thrust"
+  ros_type_name: "std_msgs/msg/Float64"
+  gz_type_name: "gz.msgs.Double"
+  direction: ROS_TO_GZ
+
+- ros_topic_name: "/underwater_robot/thruster/right_horizontal/cmd_thrust"
+  gz_topic_name: "/underwater_robot/thruster/right_horizontal/cmd_thrust"
+  ros_type_name: "std_msgs/msg/Float64"
+  gz_type_name: "gz.msgs.Double"
+  direction: ROS_TO_GZ

@@ -1,0 +1,22 @@
+build/
+install/
+log/
+.backups/
+.vscode/
+__pycache__/
+*.pyc
+*.swp
+*.swo
+
+# Runtime/generated simulation outputs
+oil_detections.csv
+surface_oil_detections.csv
+surface_demo_frames/
+surface_evidence/
+cam_a.png
+cam_b.png
+ogre1_frame.png
+
+# Python cache
+**/__pycache__/
+**/*.pyc
